@@ -56,7 +56,7 @@ namespace task_indusoft
         private void InitializeTimer()
         {
             timer = new Timer();
-            timer.Interval = 3000; // Установка интервала таймера в миллисекундах (1 секунда)
+            timer.Interval = 3000; // Установка интервала таймера в миллисекундах
             timer.Tick += Timer_Tick;
             timer.Start();
         }
@@ -107,7 +107,7 @@ namespace task_indusoft
                             command.Parameters.AddWithValue("@nameSignal", signal);
                             command.Parameters.AddWithValue("@timeStamp", DateTime.Now);
                             command.Parameters.AddWithValue("@value", value);
-                            command.Parameters.AddWithValue("@border", value < minBoundary ? minBoundary : maxBoundary); // Граница, которую пересекло значение
+                            command.Parameters.AddWithValue("@border", value < minBoundary ? minBoundary : maxBoundary); // Пересечение границы
                             command.Parameters.AddWithValue("@eventType", eventType);
                             command.ExecuteNonQuery();
                         }
@@ -261,7 +261,7 @@ namespace task_indusoft
             }
 
         }
-
+        // Обновляем форму
         private void button1_Click_1(object sender, EventArgs e)
         {
             LoadEventsFromDatabase();
