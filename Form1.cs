@@ -9,12 +9,32 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static task_indusoft.Form1;
 
 namespace task_indusoft
 {
     public partial class Form1 : Form
     {
+
+        public class DataGenerator
+        {
+            private Random random;
+
+            public DataGenerator()
+            {
+                random = new Random();
+            }
+
+            public float GenerateRandomValue()
+            {
+                return (float)random.NextDouble() * 200; // Пример случайного значения от 0 до 199
+            }
+        }
+
+
         private Timer timer;
+
+        private DataGenerator dataGenerator;
 
         public Form1()
         {
@@ -22,6 +42,8 @@ namespace task_indusoft
             LoadBoundariesFromDatabase();
             LoadEventsFromDatabase();
             InitializeTimer();
+
+            dataGenerator = new DataGenerator();
         }
 
         private void InitializeTimer()
@@ -41,37 +63,6 @@ namespace task_indusoft
             }
         }
 
-        private void LoadBoundariesFromDatabase()
-        {
-            string connectionString = @"Server=MSI-Y9\SQLEXPRESS;Database=base_test;Integrated Security=True;";
-            string query = "SELECT lowBorder, highBorder FROM Borders WHERE nameSignal = @nameSignal";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(query, connection))
-            {
-                command.Parameters.AddWithValue("@nameSignal", comboBox1.SelectedItem?.ToString());
-
-                try
-                {
-                    connection.Open();
-                    SqlDataReader reader = command.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        double lowBorder = reader.GetDouble(reader.GetOrdinal("lowBorder"));
-                        double highBorder = reader.GetDouble(reader.GetOrdinal("highBorder"));
-
-                        min_boundary.Text = lowBorder.ToString();
-                        max_boundary.Text = highBorder.ToString();
-                    }
-                    reader.Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error loading boundaries from the database: " + ex.Message);
-                }
-            }
-        }
-
         private float GenerateRandomValue()
         {
             Random random = new Random();
@@ -80,7 +71,7 @@ namespace task_indusoft
 
         private void GenerateAndSaveData()
         {
-            float value = GenerateRandomValue();
+            float value = dataGenerator.GenerateRandomValue();
 
             // Получение имени сигнала из выпадающего списка
             string selectedSignal = comboBox1.SelectedItem?.ToString();
@@ -109,6 +100,36 @@ namespace task_indusoft
                             LoadEventsFromDatabase();
                         }
                     } 
+                }
+            }
+        }
+        private void LoadBoundariesFromDatabase()
+        {
+            string connectionString = @"Server=MSI-Y9\SQLEXPRESS;Database=base_test;Integrated Security=True;";
+            string query = "SELECT lowBorder, highBorder FROM Borders WHERE nameSignal = @nameSignal";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@nameSignal", comboBox1.SelectedItem?.ToString());
+
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        double lowBorder = reader.GetDouble(reader.GetOrdinal("lowBorder"));
+                        double highBorder = reader.GetDouble(reader.GetOrdinal("highBorder"));
+
+                        min_boundary.Text = lowBorder.ToString();
+                        max_boundary.Text = highBorder.ToString();
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading boundaries from the database: " + ex.Message);
                 }
             }
         }
