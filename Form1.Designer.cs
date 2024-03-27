@@ -46,6 +46,13 @@ namespace task_indusoft
             this.checkBox_time_from = new System.Windows.Forms.CheckBox();
             this.checkBox_time_to = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.Boundary_events = new System.Windows.Forms.ListBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.checkBox_time_from_bound = new System.Windows.Forms.CheckBox();
+            this.checkBox_time_to_bound = new System.Windows.Forms.CheckBox();
+            this.dateTimePicker3 = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePicker4 = new System.Windows.Forms.DateTimePicker();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -199,23 +206,96 @@ namespace task_indusoft
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
+            // Boundary_events
+            // 
+            this.Boundary_events.FormattingEnabled = true;
+            this.Boundary_events.Location = new System.Drawing.Point(786, 61);
+            this.Boundary_events.Name = "Boundary_events";
+            this.Boundary_events.Size = new System.Drawing.Size(445, 303);
+            this.Boundary_events.TabIndex = 4;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label7.Location = new System.Drawing.Point(750, 38);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(30, 13);
+            this.label7.TabIndex = 1;
+            this.label7.Text = "From";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label8.Location = new System.Drawing.Point(953, 38);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(20, 13);
+            this.label8.TabIndex = 1;
+            this.label8.Text = "To";
+            // 
+            // checkBox_time_from_bound
+            // 
+            this.checkBox_time_from_bound.AutoSize = true;
+            this.checkBox_time_from_bound.Location = new System.Drawing.Point(729, 38);
+            this.checkBox_time_from_bound.Name = "checkBox_time_from_bound";
+            this.checkBox_time_from_bound.Size = new System.Drawing.Size(15, 14);
+            this.checkBox_time_from_bound.TabIndex = 3;
+            this.checkBox_time_from_bound.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_time_to_bound
+            // 
+            this.checkBox_time_to_bound.AutoSize = true;
+            this.checkBox_time_to_bound.Location = new System.Drawing.Point(933, 38);
+            this.checkBox_time_to_bound.Name = "checkBox_time_to_bound";
+            this.checkBox_time_to_bound.Size = new System.Drawing.Size(15, 14);
+            this.checkBox_time_to_bound.TabIndex = 3;
+            this.checkBox_time_to_bound.UseVisualStyleBackColor = true;
+            // 
+            // dateTimePicker3
+            // 
+            this.dateTimePicker3.CustomFormat = "dd.MM.yyyy HH:mm:ss";
+            this.dateTimePicker3.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker3.Location = new System.Drawing.Point(786, 38);
+            this.dateTimePicker3.Name = "dateTimePicker3";
+            this.dateTimePicker3.Size = new System.Drawing.Size(141, 20);
+            this.dateTimePicker3.TabIndex = 6;
+            this.dateTimePicker3.Value = new System.DateTime(2024, 3, 26, 11, 52, 0, 0);
+            // 
+            // dateTimePicker4
+            // 
+            this.dateTimePicker4.CustomFormat = "dd.MM.yyyy HH:mm:ss";
+            this.dateTimePicker4.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker4.Location = new System.Drawing.Point(989, 38);
+            this.dateTimePicker4.Name = "dateTimePicker4";
+            this.dateTimePicker4.Size = new System.Drawing.Size(141, 20);
+            this.dateTimePicker4.TabIndex = 6;
+            this.dateTimePicker4.Value = new System.DateTime(2024, 3, 26, 21, 45, 0, 0);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1254, 450);
             this.Controls.Add(this.button1);
+            this.Controls.Add(this.dateTimePicker4);
             this.Controls.Add(this.dateTimePicker2);
+            this.Controls.Add(this.dateTimePicker3);
             this.Controls.Add(this.dateTimePicker1);
+            this.Controls.Add(this.Boundary_events);
+            this.Controls.Add(this.checkBox_time_to_bound);
             this.Controls.Add(this.List_of_events);
+            this.Controls.Add(this.checkBox_time_from_bound);
             this.Controls.Add(this.checkBox_time_to);
             this.Controls.Add(this.checkBox_time_from);
             this.Controls.Add(this.check_tracing_boundaries);
             this.Controls.Add(this.max_boundary);
             this.Controls.Add(this.min_boundary);
             this.Controls.Add(this.label3);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label6);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label1);
@@ -245,6 +325,13 @@ namespace task_indusoft
         private CheckBox checkBox_time_from;
         private CheckBox checkBox_time_to;
         private Button button1;
+        private ListBox Boundary_events;
+        private Label label7;
+        private Label label8;
+        private CheckBox checkBox_time_from_bound;
+        private CheckBox checkBox_time_to_bound;
+        private DateTimePicker dateTimePicker3;
+        private DateTimePicker dateTimePicker4;
     }
 }
 

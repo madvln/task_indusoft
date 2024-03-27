@@ -29,6 +29,13 @@ namespace task_indusoft
             {
                 return (float)random.NextDouble() * 200; // Пример случайного значения от 0 до 199
             }
+
+            // Метод для генерации случайного имени сигнала
+            public string GenerateRandomSignalName()
+            {
+                string[] signalNames = { "Sig1", "Sig2", "Sig3" };
+                return signalNames[random.Next(signalNames.Length)];
+            }
         }
 
 
@@ -42,42 +49,45 @@ namespace task_indusoft
             LoadBoundariesFromDatabase();
             LoadEventsFromDatabase();
             InitializeTimer();
-
+            LoadBoundaryEventsFromDatabase();
             dataGenerator = new DataGenerator();
         }
 
         private void InitializeTimer()
         {
             timer = new Timer();
-            timer.Interval = 10000; // Установка интервала таймера в миллисекундах (1 секунда)
+            timer.Interval = 3000; // Установка интервала таймера в миллисекундах (1 секунда)
             timer.Tick += Timer_Tick;
             timer.Start();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (check_tracing_boundaries.Checked)
-            {
-                // Генерация данных и запись в базу данных
-                GenerateAndSaveData();
-            }
-        }
 
-        private float GenerateRandomValue()
-        {
-            Random random = new Random();
-            return (float)random.NextDouble() * 200; // Пример случайного значения
+            // Генерация данных и запись в базу данных
+            GenerateAndSaveData();
+
         }
 
         private void GenerateAndSaveData()
         {
             float value = dataGenerator.GenerateRandomValue();
+            string signal = dataGenerator.GenerateRandomSignalName();
 
-            // Получение имени сигнала из выпадающего списка
-            string selectedSignal = comboBox1.SelectedItem?.ToString();
-
-            if (selectedSignal != null)
+            // Запись данных в базу данных TimeSeries
+            string connectionString = @"Server=MSI-Y9\SQLEXPRESS;Database=base_test;Integrated Security=True;";
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
+                connection.Open();
+                string query = "INSERT INTO TimeSeries (nameSignal, value, timeStamp) VALUES (@nameSignal, @value, @timeStamp)";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@nameSignal", signal);
+                command.Parameters.AddWithValue("@value", value);
+                command.Parameters.AddWithValue("@timeStamp", DateTime.Now);
+                command.ExecuteNonQuery();
+            }
+
+
                 bool isTracingBoundariesEnabled = check_tracing_boundaries.Checked;
                 if (isTracingBoundariesEnabled)
                 {
@@ -85,23 +95,25 @@ namespace task_indusoft
                     float maxBoundary = float.Parse(max_boundary.Text);
                     if (value < minBoundary || value > maxBoundary)
                     {
-                        // Запись данных в базу данных
-                        string connectionString = @"Server=MSI-Y9\SQLEXPRESS;Database=base_test;Integrated Security=True;";
+                        // Определение типа события
+                        string eventType = value < minBoundary ? "Below Boundary" : "Above Boundary";
+
+                        // Запись данных в базу данных BoundaryEvents
                         using (SqlConnection connection = new SqlConnection(connectionString))
                         {
                             connection.Open();
-                            string query = "INSERT INTO TimeSeries (nameSignal, value, timeStamp) VALUES (@nameSignal, @value, @timeStamp)";
+                            string query = "INSERT INTO BoundaryEvents (nameSignal, [time], value, border, eventType) VALUES (@nameSignal, @timeStamp, @value, @border, @eventType)";
                             SqlCommand command = new SqlCommand(query, connection);
-                            command.Parameters.AddWithValue("@nameSignal", selectedSignal);
-                            command.Parameters.AddWithValue("@value", value);
+                            command.Parameters.AddWithValue("@nameSignal", signal);
                             command.Parameters.AddWithValue("@timeStamp", DateTime.Now);
+                            command.Parameters.AddWithValue("@value", value);
+                            command.Parameters.AddWithValue("@border", value < minBoundary ? minBoundary : maxBoundary); // Граница, которую пересекло значение
+                            command.Parameters.AddWithValue("@eventType", eventType);
                             command.ExecuteNonQuery();
-
-                            LoadEventsFromDatabase();
                         }
-                    } 
+                    }
                 }
-            }
+            
         }
         private void LoadBoundariesFromDatabase()
         {
@@ -186,9 +198,74 @@ namespace task_indusoft
             }
         }
 
+        private void LoadBoundaryEventsFromDatabase()
+        {
+
+            // Получение имени сигнала из выпадающего списка
+            string selectedSignal = comboBox1.SelectedItem?.ToString();
+
+            // Получение даты и времени из dateTimePicker3
+            DateTime fromDate = dateTimePicker3.Value;
+
+            // Получение даты и времени из dateTimePicker4
+            DateTime toDate = dateTimePicker4.Value;
+
+            // Проверка состояния флагов checkBox_time_from_bound и checkBox_time_to_bound
+            if (!checkBox_time_from_bound.Checked)
+            {
+                // Если флаг не установлен, используем минимальную дату
+                fromDate = new DateTime(1753, 1, 1);
+            }
+
+            if (!checkBox_time_to_bound.Checked)
+            {
+                // Если флаг не установлен, используем максимальную дату
+                toDate = new DateTime(9999, 12, 31, 23, 59, 59);
+            }
+
+            // Очищаем ListBox перед загрузкой новых данных
+            Boundary_events.Items.Clear();
+
+
+            // Подключение к базе данных
+            string connectionString = @"Server=MSI-Y9\SQLEXPRESS;Database=base_test;Integrated Security=True;";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Создание команды для выполнения SQL-запроса
+                string query = "SELECT * FROM BoundaryEvents WHERE [time] >= @fromDate AND [time] <= @toDate";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@fromDate", fromDate);
+                command.Parameters.AddWithValue("@toDate", toDate);
+
+                // Выполнение команды и получение данных
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    // Получение значений из результата запроса
+                    string nameSignal = reader["nameSignal"].ToString();
+                    DateTime time = (DateTime)reader["time"];
+                    double value = (double)reader["value"];
+                    double border = (double)reader["border"];
+                    string eventType = reader["eventType"].ToString();
+                    
+                    if (nameSignal == selectedSignal)
+                    {
+                        // Отображение данных в списке событий
+                        Boundary_events.Items.Add($"{time}: Signal '{nameSignal}' {eventType} boundary value {border}, actual value {value}");
+                    }
+
+                }
+                reader.Close();
+            }
+
+        }
+
         private void button1_Click_1(object sender, EventArgs e)
         {
             LoadEventsFromDatabase();
+            LoadBoundaryEventsFromDatabase();
         }
     }
 }
