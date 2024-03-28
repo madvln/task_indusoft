@@ -75,7 +75,8 @@ namespace task_indusoft
             string signal = dataGenerator.GenerateRandomSignalName();
 
             // Запись данных в базу данных TimeSeries
-            string connectionString = @"Server=MSI-Y9\SQLEXPRESS;Database=base_test;Integrated Security=True;";
+            string serverName = textBox1.Text; // Получаем имя сервера из textBox1
+            string connectionString = $"Server={serverName};Database=base_test;Integrated Security=True;";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -117,7 +118,8 @@ namespace task_indusoft
         }
         private void LoadBoundariesFromDatabase()
         {
-            string connectionString = @"Server=MSI-Y9\SQLEXPRESS;Database=base_test;Integrated Security=True;";
+            string serverName = textBox1.Text; // Получаем имя сервера из textBox1
+            string connectionString = $"Server={serverName};Database=base_test;Integrated Security=True;";
             string query = "SELECT lowBorder, highBorder FROM Borders WHERE nameSignal = @nameSignal";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -171,7 +173,8 @@ namespace task_indusoft
             // Очищаем ListBox перед загрузкой новых данных
             List_of_events.Items.Clear();
             // Подключение к базе данных
-            string connectionString = @"Server=MSI-Y9\SQLEXPRESS;Database=base_test;Integrated Security=True;";
+            string serverName = textBox1.Text; // Получаем имя сервера из textBox1
+            string connectionString = $"Server={serverName};Database=base_test;Integrated Security=True;";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -228,7 +231,8 @@ namespace task_indusoft
 
 
             // Подключение к базе данных
-            string connectionString = @"Server=MSI-Y9\SQLEXPRESS;Database=base_test;Integrated Security=True;";
+            string serverName = textBox1.Text; // Получаем имя сервера из textBox1
+            string connectionString = $"Server={serverName};Database=base_test;Integrated Security=True;";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

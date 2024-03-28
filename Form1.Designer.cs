@@ -53,6 +53,8 @@ namespace task_indusoft
             this.checkBox_time_to_bound = new System.Windows.Forms.CheckBox();
             this.dateTimePicker3 = new System.Windows.Forms.DateTimePicker();
             this.dateTimePicker4 = new System.Windows.Forms.DateTimePicker();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -272,6 +274,23 @@ namespace task_indusoft
             this.dateTimePicker4.TabIndex = 6;
             this.dateTimePicker4.Value = new System.DateTime(2024, 3, 26, 21, 45, 0, 0);
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(23, 22);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(210, 20);
+            this.textBox1.TabIndex = 2;
+            this.textBox1.Text = "MSI-Y9\\SQLEXPRESS";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(20, 6);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(67, 13);
+            this.label9.TabIndex = 1;
+            this.label9.Text = "Server name";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -290,6 +309,7 @@ namespace task_indusoft
             this.Controls.Add(this.checkBox_time_from);
             this.Controls.Add(this.check_tracing_boundaries);
             this.Controls.Add(this.max_boundary);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.min_boundary);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label8);
@@ -298,6 +318,7 @@ namespace task_indusoft
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label5);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
             this.Name = "Form1";
@@ -332,6 +353,8 @@ namespace task_indusoft
         private CheckBox checkBox_time_to_bound;
         private DateTimePicker dateTimePicker3;
         private DateTimePicker dateTimePicker4;
+        private TextBox textBox1;
+        private Label label9;
     }
 }
 
