@@ -280,7 +280,7 @@ namespace task_indusoft
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(210, 20);
             this.textBox1.TabIndex = 2;
-            this.textBox1.Text = "MSI-Y9\\SQLEXPRESS";
+            this.textBox1.Text = "textBox";
             // 
             // label9
             // 

@@ -13,6 +13,8 @@ using static task_indusoft.Form1;
 
 namespace task_indusoft
 {
+
+
     public partial class Form1 : Form
     {
 
@@ -45,7 +47,9 @@ namespace task_indusoft
 
         public Form1()
         {
+
             InitializeComponent();
+            ReadNameDB();
             LoadBoundariesFromDatabase();
             LoadEventsFromDatabase();
             InitializeTimer();
@@ -89,32 +93,32 @@ namespace task_indusoft
             }
 
 
-                bool isTracingBoundariesEnabled = check_tracing_boundaries.Checked;
-                if (isTracingBoundariesEnabled)
+            bool isTracingBoundariesEnabled = check_tracing_boundaries.Checked;
+            if (isTracingBoundariesEnabled)
+            {
+                float minBoundary = float.Parse(min_boundary.Text);
+                float maxBoundary = float.Parse(max_boundary.Text);
+                if (value < minBoundary || value > maxBoundary)
                 {
-                    float minBoundary = float.Parse(min_boundary.Text);
-                    float maxBoundary = float.Parse(max_boundary.Text);
-                    if (value < minBoundary || value > maxBoundary)
-                    {
-                        // Определение типа события
-                        string eventType = value < minBoundary ? "Below Boundary" : "Above Boundary";
+                    // Определение типа события
+                    string eventType = value < minBoundary ? "Below Boundary" : "Above Boundary";
 
-                        // Запись данных в базу данных BoundaryEvents
-                        using (SqlConnection connection = new SqlConnection(connectionString))
-                        {
-                            connection.Open();
-                            string query = "INSERT INTO BoundaryEvents (nameSignal, [time], value, border, eventType) VALUES (@nameSignal, @timeStamp, @value, @border, @eventType)";
-                            SqlCommand command = new SqlCommand(query, connection);
-                            command.Parameters.AddWithValue("@nameSignal", signal);
-                            command.Parameters.AddWithValue("@timeStamp", DateTime.Now);
-                            command.Parameters.AddWithValue("@value", value);
-                            command.Parameters.AddWithValue("@border", value < minBoundary ? minBoundary : maxBoundary); // Пересечение границы
-                            command.Parameters.AddWithValue("@eventType", eventType);
-                            command.ExecuteNonQuery();
-                        }
+                    // Запись данных в базу данных BoundaryEvents
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string query = "INSERT INTO BoundaryEvents (nameSignal, [time], value, border, eventType) VALUES (@nameSignal, @timeStamp, @value, @border, @eventType)";
+                        SqlCommand command = new SqlCommand(query, connection);
+                        command.Parameters.AddWithValue("@nameSignal", signal);
+                        command.Parameters.AddWithValue("@timeStamp", DateTime.Now);
+                        command.Parameters.AddWithValue("@value", value);
+                        command.Parameters.AddWithValue("@border", value < minBoundary ? minBoundary : maxBoundary); // Пересечение границы
+                        command.Parameters.AddWithValue("@eventType", eventType);
+                        command.ExecuteNonQuery();
                     }
                 }
-            
+            }
+
         }
         private void LoadBoundariesFromDatabase()
         {
@@ -253,7 +257,7 @@ namespace task_indusoft
                     double value = (double)reader["value"];
                     double border = (double)reader["border"];
                     string eventType = reader["eventType"].ToString();
-                    
+
                     if (nameSignal == selectedSignal)
                     {
                         // Отображение данных в списке событий
@@ -270,6 +274,74 @@ namespace task_indusoft
         {
             LoadEventsFromDatabase();
             LoadBoundaryEventsFromDatabase();
+        }
+        private void ReadNameDB()
+        {
+            // Показываем диалоговое окно с запросом названия базы данных
+            InputDialog inputDialog = new InputDialog("Введите название базы данных:");
+
+
+            // Показываем диалоговое окно и получаем результат
+            if (inputDialog.ShowDialog() == DialogResult.OK)
+            {
+                string dbName = inputDialog.InputText;
+                textBox1.Text = dbName;
+            }
+        }
+    }
+
+    // Класс для создания диалогового окна ввода текста
+    public class InputDialog : Form
+    {
+        private TextBox textBox;
+        private Button okButton;
+        private Button cancelButton;
+
+        // Свойство для получения введенного текста
+        public string InputText
+        {
+            get { return textBox.Text; }
+        }
+
+        // Конструктор
+        public InputDialog(string prompt)
+        {
+            InitializeComponent(prompt);
+        }
+
+        // Метод для инициализации компонентов
+        private void InitializeComponent(string prompt)
+        {
+            textBox = new TextBox();
+            okButton = new Button();
+            cancelButton = new Button();
+
+            // Настройка текста и размеров компонентов
+            this.SuspendLayout();
+            textBox.Location = new System.Drawing.Point(12, 12);
+            textBox.Size = new System.Drawing.Size(260, 20);
+
+            okButton.Location = new System.Drawing.Point(116, 47);
+            okButton.Size = new System.Drawing.Size(75, 23);
+            okButton.Text = "ОК";
+            okButton.DialogResult = DialogResult.OK;
+
+            cancelButton.Location = new System.Drawing.Point(197, 47);
+            cancelButton.Size = new System.Drawing.Size(75, 23);
+            cancelButton.Text = "Отмена";
+            cancelButton.DialogResult = DialogResult.Cancel;
+
+            this.ClientSize = new System.Drawing.Size(284, 82);
+            this.Controls.Add(textBox);
+            this.Controls.Add(okButton);
+            this.Controls.Add(cancelButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = prompt;
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
     }
 }
